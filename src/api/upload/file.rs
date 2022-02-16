@@ -1,6 +1,7 @@
 use crate::api::client::UploadClient;
 use crate::models::*;
 use crate::types::Result;
+use crate::RustWistiaError;
 
 use std::fmt::Debug;
 use std::io;
