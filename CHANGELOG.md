@@ -11,6 +11,12 @@ Possible header types:
 
 ## [Unreleased]
 
+## v0.2.1 (2022-02-16)
+
+### Bug Fixes
+
+* Ensure `examples/assets` directory isn't included when publishing the crate to *crates.io*.
+
 ## v0.2.0 (2022-02-16)
 
 ### Features

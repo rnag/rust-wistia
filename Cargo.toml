@@ -10,7 +10,7 @@ keywords = ["wistia", "media", "api", "client", "upload-api"]
 categories = ["api-bindings", "multimedia::video"]
 license = "MIT"
 edition = "2021"
-exclude = ["./examples/assets/*"]
+exclude = ["examples/assets"]
 
 # See here for more info: https://blog.rust-lang.org/2020/03/15/docs-rs-opt-into-fewer-targets.html
 
