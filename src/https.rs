@@ -26,7 +26,11 @@ use rustls::ClientConfig;
 use tls::ConfigBuilderExt;
 
 #[cfg(all(feature = "rust-tls", feature = "http2"))]
-pub(crate) fn get_https_client() -> Client<tls::HttpsConnector<HttpConnector>, Body> {
+pub(crate) fn get_https_client<T>() -> Client<tls::HttpsConnector<HttpConnector>, T>
+where
+    T: hyper::body::HttpBody + std::marker::Send,
+    <T as hyper::body::HttpBody>::Data: Send,
+{
     // Prepare the HTTPS connector
     let https_connector = tls::HttpsConnectorBuilder::new()
         // .with_native_roots()
@@ -43,7 +47,7 @@ pub(crate) fn get_https_client() -> Client<tls::HttpsConnector<HttpConnector>, B
     let mut builder = Client::builder();
     builder.http2_only(true);
 
-    builder.build::<_, Body>(https_connector)
+    builder.build::<_, T>(https_connector)
 }
 
 #[cfg(all(feature = "rust-tls", not(feature = "http2")))]
@@ -69,8 +73,12 @@ where
 }
 
 #[cfg(not(feature = "rust-tls"))]
-pub(crate) fn get_https_client() -> Client<tls::HttpsConnector<HttpConnector>, Body> {
+pub(crate) fn get_https_client<T>() -> Client<tls::HttpsConnector<HttpConnector>, T>
+where
+    T: hyper::body::HttpBody + std::marker::Send,
+    <T as hyper::body::HttpBody>::Data: Send,
+{
     // Prepare the HTTPS connector
     let https_connector = tls::HttpsConnector::new();
-    Client::builder().build::<_, Body>(https_connector)
+    Client::builder().build::<_, T>(https_connector)
 }
