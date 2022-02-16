@@ -1,6 +1,6 @@
 # rust-wistia
 
-[<img alt="github" src="https://img.shields.io/badge/github-rnag/rust-wistia?style=for-the-badge&labelColor=555555&logo=github" height="25">](https://github.com/rnag/rust-wistia)
+[<img alt="github" src="https://img.shields.io/badge/github-rnag/rust--wistia-8da0cb?style=for-the-badge&labelColor=555555&logo=github" height="25">](https://github.com/rnag/rust-wistia)
 [<img alt="crates.io" src="https://img.shields.io/crates/v/rust-wistia.svg?style=for-the-badge&color=fc8d62&logo=rust" height="25">](https://crates.io/crates/rust-wistia)
 [<img alt="docs.rs" src="https://img.shields.io/docsrs/rust-wistia/latest?style=for-the-badge&labelColor=555555" height="25">](https://docs.rs/rust-wistia)
 [<img alt="build status" src="https://img.shields.io/github/workflow/status/rnag/rust-wistia/build/main?style=for-the-badge" height="25">](https://github.com/rnag/rust-wistia/actions?query=branch%3Amain)
