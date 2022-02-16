@@ -1,9 +1,12 @@
+//! Library-specific utilities, mainly for internal use.
+//!
 use crate::Result;
+
+use std::io::{BufReader, Read};
 
 use hyper::body::Buf;
 use hyper::{Body, Response, Uri};
 use serde::de;
-use std::io::{BufReader, Read};
 
 pub fn host_with_path(url: &str) -> Result<String> {
     let uri: Uri = url.parse()?;
