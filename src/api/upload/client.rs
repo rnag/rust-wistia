@@ -18,7 +18,7 @@ use serde_urlencoded::to_string;
 ///
 /// # Note
 /// Prefer to use this with one of the concrete implementations, i.e.
-/// [`rust_wistia::FileUploader`] or [`rust_wistia::UrlUploader`].
+/// [`crate::FileUploader`] or [`crate::UrlUploader`].
 ///
 /// Also check out the [`rust-wistia`] docs for usage and examples.
 ///

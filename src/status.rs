@@ -24,7 +24,7 @@ use hyper::{http, Body};
 ///
 /// # Credits
 ///
-/// https://github.com/psf/requests/blob/95f456733656ed93645ff0250bfa54f6d256f6fe/requests/models.py#L945
+/// <https://github.com/psf/requests/blob/95f456733656ed93645ff0250bfa54f6d256f6fe/requests/models.py#L945>
 ///
 pub async fn raise_for_status(request_url: &str, resp: &mut Response<Body>) -> Result<()> {
     let status_code = resp.status().as_u16();
