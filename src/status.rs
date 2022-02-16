@@ -2,9 +2,9 @@
 //! indicates that it is a success.
 //!
 use crate::log::error;
-use crate::models::{RustWistiaError, WistiaError};
 use crate::types::Result;
 use crate::utils::{host_with_path, resp_to_string};
+use crate::{RustWistiaError, WistiaError};
 
 use core::result::Result::{Err, Ok};
 

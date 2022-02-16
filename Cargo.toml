@@ -39,9 +39,10 @@ hyper-tls = { version = "0.5.0", optional = true }
 
 # For easier parsing of command-line arguments.
 docopt = "1.1.1"
-# futures-util = "0.3.21"
 tokio = { version = "1.16.1", features = ["macros", "rt-multi-thread"] }
 pretty_env_logger = "0.4.0"
+# Ensure package versions mentioned in the docs are up to date.
+version-sync = "0.9.4"
 
 ### FEATURES #################################################################
 

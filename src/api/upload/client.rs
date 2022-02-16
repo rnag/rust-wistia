@@ -5,6 +5,7 @@ use crate::models::*;
 use crate::status::raise_for_status;
 use crate::types::Result;
 use crate::utils::into_struct_from_slice;
+use crate::RustWistiaError;
 
 use std::env::var;
 use std::time::Instant;
