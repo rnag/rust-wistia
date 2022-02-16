@@ -25,8 +25,8 @@ tokio = { version = "1", features = ["full"] }
 ## Table of Contents
 
 * [Getting Started](#getting-started)
-* [Dependencies and Features](#dependencies-and-features)
 * [Examples](#examples)
+* [Dependencies and Features](#dependencies-and-features)
 * [Contributing](#contributing)
 * [License](#license)
 * [Authors](#authors)
