@@ -8,7 +8,7 @@
 **rust-wistia** is a *rust crate* which provides an `async` wrapper API that lets you easily interact
 with the [Wistia API](https://wistia.com/support/developers).
 
-This is inspired by and based on my [wystia] library, which is a Python wrapper library for interacting with the
+This is inspired by and based on [wystia], my Python wrapper library for interacting with the
 Wistia API.
 
 [wystia]: https://github.com/rnag/wystia
