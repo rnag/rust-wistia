@@ -7,7 +7,6 @@ use crate::types::Result;
 use crate::utils::into_struct_from_slice;
 
 use std::env::var;
-use std::io::ErrorKind;
 use std::time::Instant;
 
 use hyper::body::HttpBody;
@@ -49,13 +48,9 @@ where
     pub fn from_env() -> Result<Self> {
         let token = match var(ENV_VAR_NAME) {
             Ok(val) => Ok(val),
-            Err(_) => Err(std::io::Error::new(
-                ErrorKind::NotFound,
-                format!(
-                    "Environment variable `{name}` must be set.",
-                    name = ENV_VAR_NAME
-                ),
-            )),
+            Err(_) => Err(RustWistiaError::EnvVarNotFound {
+                name: ENV_VAR_NAME.to_owned(),
+            }),
         }?;
 
         Ok(Self::new(&token))

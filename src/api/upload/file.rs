@@ -3,6 +3,7 @@ use crate::models::*;
 use crate::types::Result;
 
 use std::fmt::Debug;
+use std::io;
 use std::path::Path;
 
 use hyper::Request;
@@ -131,7 +132,12 @@ where
         // Add multi-part form fields
 
         form.add_file("file", &self.req.file_path)
-            .unwrap_or_else(|_| panic!("source file path ({:?}) should exist", self.req.file_path));
+            .map_err(|e: io::Error| match e.kind() {
+                io::ErrorKind::NotFound => RustWistiaError::FileNotFound(
+                    self.req.file_path.as_ref().to_string_lossy().to_string(),
+                ),
+                _ => RustWistiaError::Io(e),
+            })?;
 
         if let Some(description) = self.req.description {
             form.add_text("description", description);

@@ -2,7 +2,7 @@
 //! indicates that it is a success.
 //!
 use crate::log::error;
-use crate::models::{RequestError, WistiaError};
+use crate::models::{RustWistiaError, WistiaError};
 use crate::types::Result;
 use crate::utils::{host_with_path, resp_to_string};
 
@@ -54,20 +54,27 @@ pub async fn raise_for_status(request_url: &str, resp: &mut Response<Body>) -> R
     }
 
     let resp_data = resp_to_string(resp).await?;
-
-    let mut e = RequestError::new(status_code, reason);
+    let error: WistiaError;
 
     // Attempt to de-serialize the response data into a `WistiaError`
     // object, and set the `error` field. If there are any errors in
     // de-serializing the data, we populate the `message` field instead.
     if let Ok(error_data) = serde_json::from_str::<WistiaError>(&resp_data) {
-        e.error = error_data;
+        error = error_data;
     } else {
-        e.error = WistiaError::default();
-        e.error.error = resp_data.trim().to_owned();
+        error = WistiaError {
+            message: resp_data.trim().to_owned(),
+            ..Default::default()
+        }
     }
+
+    let e = RustWistiaError::Request {
+        status_code,
+        reason,
+        error,
+    };
 
     error!("{:#?}", e);
 
-    Err(Box::new(e))
+    Err(e)
 }
