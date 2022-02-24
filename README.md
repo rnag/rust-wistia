@@ -36,7 +36,7 @@ tokio = { version = "1", features = ["full"] }
 Getting started with the `rust-wistia` library is easy:
 
 1. Set **WISTIA_API_TOKEN** in your environment; you can
-   also use the `from_token` constructor
+   also use the `from` constructor
    to explicitly set the token value.
    Find out more  about [Authentication and Access Tokens](https://wistia.com/support/developers/data-api#creating-and-managing-access-tokens)
    in the Wistia API Documentation.

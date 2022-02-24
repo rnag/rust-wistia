@@ -37,6 +37,34 @@ pub struct UploadClient<B = Body> {
     client: Client<tls::HttpsConnector<HttpConnector>, B>,
 }
 
+impl<B: HttpBody + Send + 'static> From<String> for UploadClient<B>
+where
+    <B as HttpBody>::Data: Send,
+    <B as HttpBody>::Error: Into<Box<(dyn std::error::Error + Send + Sync + 'static)>>,
+{
+    /// Create a new `UploadClient` from an access token
+    fn from(token: String) -> Self {
+        Self {
+            access_token: token,
+            client: get_https_client(),
+        }
+    }
+}
+
+impl<B: HttpBody + Send + 'static> From<&str> for UploadClient<B>
+where
+    <B as HttpBody>::Data: Send,
+    <B as HttpBody>::Error: Into<Box<(dyn std::error::Error + Send + Sync + 'static)>>,
+{
+    /// Create a new `UploadClient` from an access token
+    fn from(token: &str) -> Self {
+        Self {
+            access_token: token.to_string(),
+            client: get_https_client(),
+        }
+    }
+}
+
 impl<B: HttpBody + Send + 'static> UploadClient<B>
 where
     <B as HttpBody>::Data: Send,
@@ -54,27 +82,14 @@ where
             }),
         }?;
 
-        Ok(Self::new(&token))
+        Ok(Self::from(token))
     }
 
     /// Initialize a new `UploadClient` object from an [API access token].
     ///
     /// [API access token]: https://wistia.com/support/developers/data-api#getting-started
-    pub fn from_token(token: &'static str) -> Self {
-        Self {
-            access_token: token.to_string(),
-            client: get_https_client(),
-        }
-    }
-
-    /// Constructor function, for internal use
-    fn new(access_token: &str) -> Self {
-        let client = get_https_client();
-
-        Self {
-            access_token: access_token.to_string(),
-            client,
-        }
+    pub fn from_token(token: &str) -> Self {
+        Self::from(token)
     }
 
     /// Build the URL with the url-encoded *query parameters* included
