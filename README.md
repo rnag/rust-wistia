@@ -18,7 +18,7 @@ This crate works with Cargo with a `Cargo.toml` like:
 
 ```toml
 [dependencies]
-rust-wistia = "0.2.1"
+rust-wistia = "0.2.2"
 tokio = { version = "1", features = ["full"] }
 ```
 
@@ -36,7 +36,7 @@ tokio = { version = "1", features = ["full"] }
 Getting started with the `rust-wistia` library is easy:
 
 1. Set **WISTIA_API_TOKEN** in your environment; you can
-   also use the `from_token` constructor
+   also use the `from` constructor
    to explicitly set the token value.
    Find out more  about [Authentication and Access Tokens](https://wistia.com/support/developers/data-api#creating-and-managing-access-tokens)
    in the Wistia API Documentation.
@@ -85,7 +85,7 @@ To do this, disable the default "rust-tls" feature and enable the "native-tls" f
 
 ```toml
 [dependencies]
-rust-wistia = { version = "0.2.1", default-features = false, features = ["native-tls", "logging", "serde-std"] }
+rust-wistia = { version = "0.2.2", default-features = false, features = ["native-tls", "logging", "serde-std"] }
 ```
 
 [`hyper`]: https://docs.rs/hyper

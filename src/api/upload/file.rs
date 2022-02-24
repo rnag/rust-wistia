@@ -54,7 +54,7 @@ where
     /// * `access_token` - An API access token used to make requests to the
     /// Wistia API.
     ///
-    pub fn with_token(file_path: P, access_token: &'static str) -> Self {
+    pub fn with_token(file_path: P, access_token: &str) -> Self {
         Self {
             client: UploadClient::from_token(access_token),
             req: UploadFileRequest::new(file_path),
@@ -81,28 +81,28 @@ where
     /// The hashed id of the project to upload media into. If omitted, a new
     /// project will be created and uploaded to. The naming convention used
     /// for such projects is `Uploads_YYYY-MM-DD`.
-    pub fn project_id(mut self, project_id: &'a str) -> FileUploader<'a, P> {
+    pub fn project_id(mut self, project_id: &'a str) -> Self {
         self.req.project_id = Some(project_id);
         self
     }
 
     /// A display name to use for the media in Wistia. If omitted, the filename
     /// will be used instead. This field is limited to 255 characters.
-    pub fn name(mut self, name: &'a str) -> FileUploader<'a, P> {
+    pub fn name(mut self, name: &'a str) -> Self {
         self.req.name = Some(name);
         self
     }
 
     /// A description to use for the media in Wistia. You can use basic HTML
     /// here, but note that both HTML and CSS will be sanitized.
-    pub fn description(mut self, description: &'a str) -> FileUploader<'a, P> {
+    pub fn description(mut self, description: &'a str) -> Self {
         self.req.description = Some(description);
         self
     }
 
     /// A Wistia contact id, an integer value. If omitted, it will default to
     /// the contact_id of the account’s owner.
-    pub fn contact_id(mut self, contact_id: &'a str) -> FileUploader<'a, P> {
+    pub fn contact_id(mut self, contact_id: &'a str) -> Self {
         self.req.contact_id = Some(contact_id);
         self
     }

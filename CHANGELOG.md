@@ -11,6 +11,15 @@ Possible header types:
 
 ## [Unreleased]
 
+## v0.2.2 (2022-02-24)
+
+### Features
+
+* Replace usage of `&'static str` with `&str`
+* Add `from()` constructors for API clients so easier to pass in access tokens if needed.
+* Add new `UrlUploader::url()` fluent method, which can be useful when the
+  `from()` constructor is used.
+
 ## v0.2.1 (2022-02-16)
 
 ### Bug Fixes
