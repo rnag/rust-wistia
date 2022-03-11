@@ -57,6 +57,9 @@ pub(crate) struct UploadUrlRequest<'a> {
     pub contact_id: Option<&'a str>,
 }
 
+// We get a warning in the `examples/` that this is not used, but it *will*
+// be used when the optional feature is enabled.
+#[allow(unused)]
 pub(crate) struct UploadFileRequest<'a, P> {
     /// **Required**. The path to the media file. The contents of this file
     /// will be multipart-form encoded into the request body.
@@ -77,6 +80,7 @@ pub(crate) struct UploadFileRequest<'a, P> {
 }
 
 impl<'a, P> UploadFileRequest<'a, P> {
+    #[allow(unused)]
     pub(crate) fn new(file_path: P) -> Self {
         Self {
             file_path,

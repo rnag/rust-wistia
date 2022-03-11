@@ -61,6 +61,7 @@
 //!
 
 mod api;
+pub mod auth;
 pub mod constants;
 mod https;
 pub mod models;
