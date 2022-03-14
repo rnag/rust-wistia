@@ -1,4 +1,6 @@
 use rust_wistia::{FileUploader, Result, UploadClient};
+#[macro_use]
+extern crate log;
 
 use std::path::Path;
 
@@ -31,11 +33,13 @@ struct Args {
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    pretty_env_logger::init();
+    sensible_env_logger::init_timed_short!();
 
     let args: Args = Docopt::new(USAGE)
         .and_then(|d| d.deserialize())
         .unwrap_or_else(|e| e.exit());
+
+    trace!("Uploading file to Wistia...");
 
     let client = UploadClient::from_env()?;
     let file_path = Path::new(&args.flag_path);
@@ -50,8 +54,8 @@ async fn main() -> Result<()> {
         .send()
         .await?;
 
-    println!("Response: {res:#?}");
-    println!("Video ID: {}", res.hashed_id);
+    trace!("Response: {res:#?}");
+    trace!("Video ID: {}", res.hashed_id);
 
     Ok(())
 }

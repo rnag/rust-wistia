@@ -1,4 +1,6 @@
 use rust_wistia::{Result, UrlUploader};
+#[macro_use]
+extern crate log;
 
 use docopt::Docopt;
 use serde::Deserialize;
@@ -32,11 +34,13 @@ struct Args {
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    pretty_env_logger::init();
+    sensible_env_logger::init_timed_short!();
 
     let args: Args = Docopt::new(USAGE)
         .and_then(|d| d.deserialize())
         .unwrap_or_else(|e| e.exit());
+
+    trace!("Uploading link to Wistia...");
 
     // Alternatively, we could use `UrlUploader::with_client(url, client)` to
     // create the new `UrlUploader` instance.
@@ -64,8 +68,8 @@ async fn main() -> Result<()> {
 
     let res = uploader.send().await?;
 
-    println!("Response: {res:#?}");
-    println!("Video ID: {}", res.hashed_id);
+    trace!("Response: {res:#?}");
+    trace!("Video ID: {}", res.hashed_id);
 
     Ok(())
 }
