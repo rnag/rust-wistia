@@ -1,57 +1,59 @@
 use rust_wistia::{FileUploader, Result, UploadClient};
+#[macro_use]
+extern crate log;
 
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
-use docopt::Docopt;
-use serde::Deserialize;
+use clap::Parser;
 
-// Write the Docopt usage string.
-const USAGE: &str = "
-Usage: upload_file [options]
-
-Options:
-    -h, --help                 Display this message
-    -p, --path=<file>          Path to media file
-                                 [default: ./examples/assets/sample-video.mp4]
-    -n, --name=<media_name>    Name of the media file
-    -d, --description=<desc>   Description of the media file
-                                 [default: My <i>test</i><br>Message <b>here</b>.]
-    -i, --project-id=<id>      Hashed ID of the Wistia project to upload to
-    -c, --contact-id=<id>      A Wistia contact id, an integer value.
-";
-
-#[derive(Debug, Deserialize)]
+/// Upload a local file to Wistia
+#[derive(Parser, Debug)]
 struct Args {
-    flag_path: String,
-    flag_name: String,
-    flag_description: String,
-    flag_project_id: String,
-    flag_contact_id: String,
+    /// Path to media file
+    #[clap(
+        short,
+        long,
+        parse(from_os_str),
+        default_value = "./examples/assets/sample-video.mp4"
+    )]
+    file_path: PathBuf,
+    /// Name of the media file
+    #[clap(short, long, default_value_t = String::new())]
+    name: String,
+    /// Description of the media file
+    #[clap(short, long, default_value = "My <i>test</i><br>Message <b>here</b>.")]
+    description: String,
+    /// Hashed ID of the Wistia project to upload to
+    #[clap(short, long, default_value_t = String::new())]
+    project_id: String,
+    /// A Wistia contact id, an integer value.
+    #[clap(short, long, default_value_t = String::new())]
+    contact_id: String,
 }
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    pretty_env_logger::init();
+    sensible_env_logger::init_timed_short!();
 
-    let args: Args = Docopt::new(USAGE)
-        .and_then(|d| d.deserialize())
-        .unwrap_or_else(|e| e.exit());
+    let args: Args = Args::parse();
+
+    trace!("Uploading file to Wistia...");
 
     let client = UploadClient::from_env()?;
-    let file_path = Path::new(&args.flag_path);
+    let file_path = Path::new(&args.file_path);
 
     // Alternatively, we could use `FileUploader::new(path)?` to
     // create the new `FileUploader` instance.
     let res = FileUploader::with_client(file_path, client)
-        .project_id(&args.flag_project_id)
-        .name(&args.flag_name)
-        .description(&args.flag_description)
-        .contact_id(&args.flag_contact_id)
+        .project_id(&args.project_id)
+        .name(&args.name)
+        .description(&args.description)
+        .contact_id(&args.contact_id)
         .send()
         .await?;
 
-    println!("Response: {res:#?}");
-    println!("Video ID: {}", res.hashed_id);
+    trace!("Response: {res:#?}");
+    trace!("Video ID: {}", res.hashed_id);
 
     Ok(())
 }

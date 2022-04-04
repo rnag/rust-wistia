@@ -34,23 +34,7 @@ First, start out by cloning the GitHub project:
 ❯❯ git clone https://github.com/rnag/rust-wistia.git
 ```
 
-When running the examples, we'll often want to see the DEBUG logs from the library under test,
-`rust-wistia` in this case. Therefore, remember to ensure that the **RUST_LOG** env variable
-is properly set.
-
-For example, on *Mac/Linux*:
-
-```shell
-❯❯ export RUST_LOG='rust_wistia=TRACE'
-```
-
-On *Windows*:
-
-```shell
-❯❯ $env:RUST_LOG='rust_wistia=TRACE'
-```
-
-Next, simply just `cd` into the project folder:
+Then, simply `cd` into the project folder:
 
 ```shell
 ❯❯ cd rust-wistia

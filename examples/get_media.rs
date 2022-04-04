@@ -1,36 +1,27 @@
 use rust_wistia::{Result, WistiaClient};
 
-use docopt::Docopt;
-use serde::Deserialize;
+use clap::Parser;
 use serde_json::to_string_pretty;
 
-// Write the Docopt usage string.
-const USAGE: &str = "
-Usage: get_media [options]
-
-Options:
-    -h, --help                 Display this message
-    -i, --video-id=<id>        Hashed ID of the Wistia video to retrieve info on
-";
-
-#[derive(Debug, Deserialize)]
+/// Retrieve info on a Wistia video
+#[derive(Parser, Debug)]
 struct Args {
-    flag_video_id: String,
+    /// Hashed ID of the Wistia video to retrieve info on
+    #[clap(short, long)]
+    video_id: String,
 }
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    pretty_env_logger::init();
+    sensible_env_logger::init!();
 
-    let args: Args = Docopt::new(USAGE)
-        .and_then(|d| d.deserialize())
-        .unwrap_or_else(|e| e.exit());
+    let args: Args = Args::parse();
 
     // Alternatively, we could use `WistiaClient::from(token)?` to
     // create the new `WistiaClient` instance.
     let client = WistiaClient::from_env()?;
 
-    let video_id = &args.flag_video_id;
+    let video_id = &args.video_id;
 
     let res = client.get_media(video_id).await?;
 
