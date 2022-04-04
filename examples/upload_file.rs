@@ -1,4 +1,5 @@
 use rust_wistia::{FileUploader, Result, UploadClient};
+
 #[macro_use]
 extern crate log;
 

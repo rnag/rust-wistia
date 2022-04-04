@@ -1,4 +1,5 @@
 use rust_wistia::{Result, UrlUploader};
+
 #[macro_use]
 extern crate log;
 

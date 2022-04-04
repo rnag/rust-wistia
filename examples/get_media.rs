@@ -1,5 +1,8 @@
 use rust_wistia::{Result, WistiaClient};
 
+#[macro_use]
+extern crate log;
+
 use clap::Parser;
 use serde_json::to_string_pretty;
 
@@ -25,7 +28,7 @@ async fn main() -> Result<()> {
 
     let res = client.get_media(video_id).await?;
 
-    println!("Response: {}", to_string_pretty(&res)?);
+    trace!("Response: {}", to_string_pretty(&res)?);
 
     Ok(())
 }
