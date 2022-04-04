@@ -18,7 +18,7 @@ This crate works with Cargo with a `Cargo.toml` like:
 
 ```toml
 [dependencies]
-rust-wistia = "0.3"
+rust-wistia = "0.4"
 tokio = { version = "1", features = ["full"] }
 ```
 

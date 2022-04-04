@@ -1,6 +1,6 @@
 [package]
 name = "rust-wistia"
-version = "0.3.0"
+version = "0.4.0"
 authors = ["Ritvik Nag <rv.kvetch@gmail.com>"]
 description = "A rust crate wrapping Wistia's Data and Upload API into a simple easy to use interface"
 documentation = "https://docs.rs/rust-wistia/"
@@ -83,6 +83,10 @@ serde-alloc = ["serde_json/alloc"]
 
 [[example]]
 name = "upload_file"
+required-features = ["upload-file"]
+
+[[example]]
+name = "upload_thumbnail"
 required-features = ["upload-file"]
 
 [[example]]

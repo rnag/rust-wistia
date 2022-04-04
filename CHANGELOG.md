@@ -11,6 +11,12 @@ Possible header types:
 
 ## [Unreleased]
 
+## v0.4.0 (2022-04-04)
+
+### Features
+
+* Add new method `DataClient::update_media()` to update info on a Wistia video
+
 ## v0.3.0 (2022-04-04)
 
 ### Features
