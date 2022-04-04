@@ -11,6 +11,15 @@ Possible header types:
 
 ## [Unreleased]
 
+## v0.3.0 (2022-04-04)
+
+### Features
+
+* Update examples to use `clap` for parsing arguments
+* Add new struct `DataClient` (aliased to `WistiaClient`) for interacting with
+  the Wistia Data API
+* Add new method `DataClient::get_media()` to retrieve info on a Wistia video
+
 ## v0.2.2 (2022-02-24)
 
 ### Features

@@ -18,7 +18,7 @@ This crate works with Cargo with a `Cargo.toml` like:
 
 ```toml
 [dependencies]
-rust-wistia = "0.2.2"
+rust-wistia = "0.3"
 tokio = { version = "1", features = ["full"] }
 ```
 
@@ -85,7 +85,7 @@ To do this, disable the default "rust-tls" feature and enable the "native-tls" f
 
 ```toml
 [dependencies]
-rust-wistia = { version = "0.2.2", default-features = false, features = ["native-tls", "logging", "serde-std"] }
+rust-wistia = { version = "*", default-features = false, features = ["native-tls", "logging", "serde-std"] }
 ```
 
 [`hyper`]: https://docs.rs/hyper

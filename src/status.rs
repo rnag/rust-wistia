@@ -54,19 +54,18 @@ pub async fn raise_for_status(request_url: &str, resp: &mut Response<Body>) -> R
     }
 
     let resp_data = resp_to_string(resp).await?;
-    let error: WistiaError;
 
     // Attempt to de-serialize the response data into a `WistiaError`
     // object, and set the `error` field. If there are any errors in
     // de-serializing the data, we populate the `message` field instead.
-    if let Ok(error_data) = serde_json::from_str::<WistiaError>(&resp_data) {
-        error = error_data;
+    let error: WistiaError = if let Ok(error_data) = serde_json::from_str(&resp_data) {
+        error_data
     } else {
-        error = WistiaError {
+        WistiaError {
             message: resp_data.trim().to_owned(),
             ..Default::default()
         }
-    }
+    };
 
     let e = RustWistiaError::Request {
         status_code,

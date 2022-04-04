@@ -15,3 +15,9 @@ pub enum MediaType {
     Swf,
     UnknownType,
 }
+
+impl Default for MediaType {
+    fn default() -> Self {
+        MediaType::Video
+    }
+}

@@ -1,6 +1,6 @@
 [package]
 name = "rust-wistia"
-version = "0.2.2"
+version = "0.3.0"
 authors = ["Ritvik Nag <rv.kvetch@gmail.com>"]
 description = "A rust crate wrapping Wistia's Data and Upload API into a simple easy to use interface"
 documentation = "https://docs.rs/rust-wistia/"
@@ -37,10 +37,10 @@ hyper-tls = { version = "0.5.0", optional = true }
 
 [dev-dependencies]
 
-# For easier parsing of command-line arguments.
-docopt = "1.1.1"
+clap = { version = "^3.1", features = ["derive"] }
+log = "^0.4"
+sensible-env-logger = { version = "^0.2", features = ["local-time"] }
 tokio = { version = "1.16.1", features = ["macros", "rt-multi-thread"] }
-sensible-env-logger = { version = "0.1", features = ["local-time"] }
 # Ensure package versions mentioned in the docs are up to date.
 version-sync = "0.9.4"
 
