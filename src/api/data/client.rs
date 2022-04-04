@@ -1,7 +1,8 @@
 use crate::auth::auth_token;
 use crate::constants::ENV_VAR_NAME;
 use crate::https::{get_https_client, tls};
-use crate::models::Media;
+use crate::log::*;
+use crate::models::{Media, MediaInfo, UpdateMediaRequest};
 use crate::status::raise_for_status;
 use crate::utils::into_struct_from_slice;
 use crate::RustWistiaError;
@@ -12,8 +13,10 @@ use std::time::Instant;
 use hyper::client::{Client, HttpConnector};
 use hyper::header::AUTHORIZATION;
 use hyper::{Body, Method, Request};
-use log::debug;
 use serde::de::DeserializeOwned;
+use serde::ser::Serialize;
+use serde_json::to_vec;
+use serde_urlencoded::to_string;
 
 pub type WistiaClient<'a> = DataClient<'a>;
 
@@ -72,6 +75,9 @@ impl<'a> DataClient<'a> {
     }
 
     /// Retrieve info on a media on Wistia (typically a video)
+    ///
+    /// # Docs
+    /// <https://wistia.com/support/developers/data-api#medias-show>
     pub async fn get_media(&self, video_id: &'a str) -> crate::Result<Media> {
         let url = format!(
             "https://api.wistia.com/v1/medias/{media_id}.json",
@@ -79,6 +85,19 @@ impl<'a> DataClient<'a> {
         );
 
         self.get(&url).await
+    }
+
+    /// Update attributes on a media in Wistia (typically a video)
+    ///
+    /// # Docs
+    /// <https://wistia.com/support/developers/data-api#medias-update>
+    pub async fn update_media(&self, video: UpdateMediaRequest) -> crate::Result<MediaInfo> {
+        let url = format!(
+            "https://api.wistia.com/v1/medias/{media_id}.json",
+            media_id = video.id
+        );
+
+        self.put(&url, video).await
     }
 
     /// Make a GET request to the Wistia Data API
@@ -90,6 +109,55 @@ impl<'a> DataClient<'a> {
             .uri(url)
             .header(AUTHORIZATION, token)
             .body(Body::empty())?;
+
+        self.make_request(url, req).await
+    }
+
+    /// Make a PUT request to the Wistia Data API, with included *query parameters*
+    pub async fn put<B: Serialize, R: DeserializeOwned>(
+        &'a self,
+        url: &'a str,
+        body: B,
+    ) -> crate::Result<R> {
+        let token = self.access_token.as_ref();
+
+        let mut uri: String;
+        let params = to_string(body)?;
+        let params_len = params.len();
+
+        let url = if params_len != 0 {
+            uri = String::with_capacity(url.len() + params.len() + 1);
+            uri.push_str(url);
+            uri.push('?');
+            uri.push_str(&params);
+            uri.as_str()
+        } else {
+            url
+        };
+
+        let req = Request::builder()
+            .method(Method::PUT)
+            .uri(url)
+            .header(AUTHORIZATION, token)
+            .body(Body::empty())?;
+
+        self.make_request(url, req).await
+    }
+
+    /// Make a GET request to the Wistia Data API
+    pub async fn put_with_body<B: Serialize, R: DeserializeOwned>(
+        &'a self,
+        url: &'a str,
+        body: B,
+    ) -> crate::Result<R> {
+        let token = self.access_token.as_ref();
+        let body_data = to_vec(&body)?;
+
+        let req = Request::builder()
+            .method(Method::PUT)
+            .uri(url)
+            .header(AUTHORIZATION, token)
+            .body(Body::from(body_data))?;
 
         self.make_request(url, req).await
     }

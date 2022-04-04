@@ -86,5 +86,9 @@ name = "upload_file"
 required-features = ["upload-file"]
 
 [[example]]
+name = "upload_thumbnail"
+required-features = ["upload-file"]
+
+[[example]]
 name = "upload_url"
 required-features = ["upload-url"]
