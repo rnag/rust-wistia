@@ -144,7 +144,7 @@ impl<'a> DataClient<'a> {
         self.make_request(url, req).await
     }
 
-    /// Make a GET request to the Wistia Data API
+    /// Make a PUT request to the Wistia Data API
     pub async fn put_with_body<B: Serialize, R: DeserializeOwned>(
         &'a self,
         url: &'a str,
