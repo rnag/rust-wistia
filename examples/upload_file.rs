@@ -8,6 +8,7 @@ use std::path::{Path, PathBuf};
 use clap::Parser;
 
 /// Upload a local file to Wistia
+// noinspection DuplicatedCode
 #[derive(Parser, Debug)]
 struct Args {
     /// Path to media file
@@ -32,6 +33,7 @@ struct Args {
     contact_id: String,
 }
 
+// noinspection DuplicatedCode
 #[tokio::main]
 async fn main() -> Result<()> {
     sensible_env_logger::init_timed_short!();

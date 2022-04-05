@@ -11,3 +11,7 @@ pub const UPLOAD_API: &str = "https://upload.wistia.com";
 /// [API access token]: https://wistia.com/support/developers/data-api#getting-started
 ///
 pub const ENV_VAR_NAME: &str = "WISTIA_API_TOKEN";
+
+/// Default file name when uploading a file stream (via the `StreamUploader`)
+/// via the Upload API.
+pub const DEFAULT_FILENAME: &str = "file.mp4";

@@ -20,6 +20,7 @@ use serde_urlencoded::to_string;
 
 pub type WistiaClient<'a> = DataClient<'a>;
 
+#[derive(Clone)]
 pub struct DataClient<'a> {
     /// Represents the [API access token] used to authenticate requests to the
     /// [Wistia API].

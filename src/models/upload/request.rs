@@ -1,5 +1,7 @@
 use serde::Serialize;
 
+use std::path::Path;
+
 /// Model representing a [Request] to the Wistia [Upload API].
 ///
 /// # Note
@@ -38,7 +40,7 @@ pub struct UploadRequest<'a> {
     pub contact_id: Option<&'a str>,
 }
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub(crate) struct UploadUrlRequest<'a> {
     /// **Required**. The web location of the media file to import.
     pub url: &'a str,
@@ -60,7 +62,8 @@ pub(crate) struct UploadUrlRequest<'a> {
 // We get a warning in the `examples/` that this is not used, but it *will*
 // be used when the optional feature is enabled.
 #[allow(unused)]
-pub(crate) struct UploadFileRequest<'a, P> {
+#[derive(Clone)]
+pub(crate) struct UploadFileRequest<'a, P: AsRef<Path>> {
     /// **Required**. The path to the media file. The contents of this file
     /// will be multipart-form encoded into the request body.
     pub file_path: P,
@@ -79,11 +82,46 @@ pub(crate) struct UploadFileRequest<'a, P> {
     pub contact_id: Option<&'a str>,
 }
 
-impl<'a, P> UploadFileRequest<'a, P> {
+impl<'a, P: AsRef<Path>> UploadFileRequest<'a, P> {
     #[allow(unused)]
     pub(crate) fn new(file_path: P) -> Self {
         Self {
             file_path,
+            project_id: None,
+            name: None,
+            description: None,
+            contact_id: None,
+        }
+    }
+}
+
+// We get a warning in the `examples/` that this is not used, but it *will*
+// be used when the optional feature is enabled.
+#[allow(unused)]
+#[derive(Clone)]
+pub(crate) struct UploadStreamRequest<'a> {
+    /// Optional. The name of the media file.
+    pub file_name: &'a str,
+    /// The hashed id of the project to upload media into. If omitted, a new
+    /// project will be created and uploaded to. The naming convention used
+    /// for such projects is `Uploads_YYYY-MM-DD`.
+    pub project_id: Option<&'a str>,
+    /// A display name to use for the media in Wistia. If omitted, the filename
+    /// will be used instead. This field is limited to 255 characters.
+    pub name: Option<&'a str>,
+    /// A description to use for the media in Wistia. You can use basic HTML
+    /// here, but note that both HTML and CSS will be sanitized.
+    pub description: Option<&'a str>,
+    /// A Wistia contact id, an integer value. If omitted, it will default to
+    /// the contact_id of the account’s owner.
+    pub contact_id: Option<&'a str>,
+}
+
+impl<'a> UploadStreamRequest<'a> {
+    #[allow(unused)]
+    pub(crate) fn new(file_path: &'a str) -> Self {
+        Self {
+            file_name: file_path,
             project_id: None,
             name: None,
             description: None,
