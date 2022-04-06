@@ -26,6 +26,25 @@ pub struct StreamUploader<'a, R: 'static + Read + Send + Sync, B = Body> {
 }
 
 impl<'a, R: 'static + Read + Send + Sync> StreamUploader<'a, R> {
+    /// Create a `StreamUploader` with a new HTTPS client, with the access token
+    /// retrieved from the environment.
+    ///
+    /// # Arguments
+    ///
+    /// * `stream` - A readable file-like *stream* object to upload.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rust_wistia::StreamUploader;
+    /// use std::io::Cursor;
+    ///
+    /// let bytes = Cursor::new("Hello World!");
+    /// let uploader = StreamUploader::new(bytes)?;
+    ///
+    /// let res = uploader.name("My Video Name").send()?.await?;
+    /// ```
+    ///    
     pub fn new(stream: R) -> Result<Self> {
         Self::new_with_stream_and_filename(stream, DEFAULT_FILENAME)
     }
@@ -35,7 +54,20 @@ impl<'a, R: 'static + Read + Send + Sync> StreamUploader<'a, R> {
     ///
     /// # Arguments
     ///
+    /// * `stream` - A readable file-like *stream* object to upload.
     /// * `file_name` - The name of the media file.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rust_wistia::StreamUploader;
+    /// use std::io::Cursor;
+    ///
+    /// let bytes = Cursor::new("Hello World!");
+    /// let uploader = StreamUploader::new_with_stream_and_filename(bytes, "my_file.mp4")?;
+    ///
+    /// let res = uploader.send()?.await?;
+    /// ```
     ///
     pub fn new_with_stream_and_filename(stream: R, file_name: &'a str) -> Result<Self> {
         Ok(Self {
@@ -51,6 +83,18 @@ impl<'a, R: 'static + Read + Send + Sync> StreamUploader<'a, R> {
     /// # Arguments
     ///
     /// * `file_name` - The name of the media file.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rust_wistia::StreamUploader;
+    /// use std::io::Cursor;
+    ///
+    /// let bytes = Cursor::new("Hello World!");
+    /// let uploader = StreamUploader::new_with_filename("my_file.mp4")?.stream(bytes);
+    ///
+    /// let res = uploader.send()?.await?;
+    /// ```
     ///
     pub fn new_with_filename(file_name: &'a str) -> Result<Self> {
         Ok(Self {
@@ -68,6 +112,18 @@ impl<'a, R: 'static + Read + Send + Sync> StreamUploader<'a, R> {
     /// * `access_token` - An API access token used to make requests to the
     /// Wistia API.
     ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rust_wistia::StreamUploader;
+    /// use std::io::Cursor;
+    ///
+    /// let bytes = Cursor::new("Hello World!");
+    /// let uploader = StreamUploader::with_token("my-token").stream(bytes);
+    ///
+    /// let res = uploader.send()?.await?;
+    /// ```
+    ///
     pub fn with_token(access_token: &str) -> Self {
         Self {
             client: UploadClient::from_token(access_token),
@@ -84,6 +140,19 @@ impl<'a, R: 'static + Read + Send + Sync> StreamUploader<'a, R> {
     /// Note that the client must support multipart form requests, via a
     /// `multipart::Body`.
     ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rust_wistia::{StreamUploader, UploadClient};
+    /// use std::io::Cursor;
+    ///
+    /// let client = UploadClient::from_env()?;
+    /// let bytes = Cursor::new("Hello World!");
+    /// let uploader = StreamUploader::with_client(client).stream(bytes);
+    ///
+    /// let res = uploader.send()?.await?;
+    /// ```
+    ///
     pub fn with_client(client: UploadClient<Body>) -> Self {
         Self {
             client,
@@ -93,6 +162,15 @@ impl<'a, R: 'static + Read + Send + Sync> StreamUploader<'a, R> {
     }
 
     /// Sets the *reader stream* which will be used to upload to Wistia.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use std::io::Cursor;
+    ///
+    /// let bytes = Cursor::new("Hello World!");
+    /// let uploader = rust_wistia::StreamUploader::new_with_filename("my_file.mp4")?.stream(bytes);
+    /// ```
     pub fn stream(mut self, stream: R) -> Self {
         self.reader = Some(stream);
         self
