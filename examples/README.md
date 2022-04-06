@@ -28,7 +28,16 @@ API.
 
 ## Quickstart
 
-First, start out by cloning the GitHub project:
+[cargo-rx]: https://github.com/rnag/cargo-rx
+
+Install my project [cargo-rx], which abstracts away `cargo run --example`.
+This provides a single `rx` command.
+
+```shell
+❯❯ cargo install cargo-rx
+```
+
+Now start out by cloning the GitHub project:
 
 ```shell
 ❯❯ git clone https://github.com/rnag/rust-wistia.git
@@ -40,14 +49,21 @@ Then, simply `cd` into the project folder:
 ❯❯ cd rust-wistia
 ```
 
-From here, you can use `cargo` to build and run
+From here, you can use `rx` to build and run
 any of the examples individually.
 
 In particular, here's a simple example
 of uploading a sample file to a default project on Wistia:
 
 ```shell
-❯❯ cargo run --example upload_file --features upload-file
+❯❯ rx upload_file
+```
+
+If you run the command without any arguments, you can select 
+from the list of available examples:
+
+```shell
+❯❯ rx
 ```
 
 To pass arguments to a script, you can include them after the `--`.
@@ -57,7 +73,7 @@ which uploads a media file using a [publicly-accessible](https://gist.github.com
 URL link:
 
 ```shell
-❯❯ cargo run --example upload_url -- \
+❯❯ rx upload_url -- \
      -n "My Video Name" \
      -d "Test <i>description</i>"
 ```
