@@ -20,15 +20,13 @@ use hyper_multipart_rfc7578::client::multipart::Body;
 /// [`rust-wistia`]: https://docs.rs/rust-wistia
 /// [Upload API]: https://wistia.com/support/developers/upload-api
 ///
-pub struct FileUploader<'a, P> {
-    client: UploadClient<Body>,
+#[derive(Clone)]
+pub struct FileUploader<'a, P: AsRef<Path>, B = Body> {
+    client: UploadClient<B>,
     req: UploadFileRequest<'a, P>,
 }
 
-impl<'a, P> FileUploader<'a, P>
-where
-    P: AsRef<Path> + Debug,
-{
+impl<'a, P: AsRef<Path> + Debug> FileUploader<'a, P> {
     /// Create a `FileUploader` with a new HTTPS client, with the access token
     /// retrieved from the environment.
     ///
@@ -112,6 +110,7 @@ where
     ///
     /// [Upload API]: https://wistia.com/support/developers/upload-api
     ///
+    // noinspection DuplicatedCode
     pub async fn send(&self) -> Result<UploadResponse> {
         // Build the query parameters to pass to the Upload API
 

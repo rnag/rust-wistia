@@ -15,8 +15,9 @@ use serde_urlencoded::to_string;
 /// [`rust-wistia`]: https://docs.rs/rust-wistia
 /// [Upload API]: https://wistia.com/support/developers/upload-api
 ///
-pub struct UrlUploader<'a> {
-    client: UploadClient<Body>,
+#[derive(Clone)]
+pub struct UrlUploader<'a, B = Body> {
+    client: UploadClient<B>,
     req: UploadUrlRequest<'a>,
 }
 

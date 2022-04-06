@@ -51,7 +51,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! rust-wistia = { version = "0.4", default-features = false, features = ["native-tls", "logging", "serde-std"] }
+//! rust-wistia = { version = "0.5", default-features = false, features = ["native-tls", "logging", "serde-std"] }
 //! ```
 //!
 //! [hyper]: https://docs.rs/hyper
@@ -63,7 +63,7 @@
 mod api;
 pub mod auth;
 pub mod constants;
-mod https;
+pub mod https;
 pub mod models;
 pub mod status;
 pub mod types;

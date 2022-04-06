@@ -26,7 +26,7 @@ use rustls::ClientConfig;
 use tls::ConfigBuilderExt;
 
 #[cfg(all(feature = "rust-tls", feature = "http2"))]
-pub(crate) fn get_https_client<T>() -> Client<tls::HttpsConnector<HttpConnector>, T>
+pub fn get_https_client<T>() -> Client<tls::HttpsConnector<HttpConnector>, T>
 where
     T: hyper::body::HttpBody + std::marker::Send,
     <T as hyper::body::HttpBody>::Data: Send,
@@ -51,7 +51,7 @@ where
 }
 
 #[cfg(all(feature = "rust-tls", not(feature = "http2")))]
-pub(crate) fn get_https_client<T>() -> Client<tls::HttpsConnector<HttpConnector>, T>
+pub fn get_https_client<T>() -> Client<tls::HttpsConnector<HttpConnector>, T>
 where
     T: hyper::body::HttpBody + std::marker::Send,
     <T as hyper::body::HttpBody>::Data: Send,
@@ -73,7 +73,7 @@ where
 }
 
 #[cfg(not(feature = "rust-tls"))]
-pub(crate) fn get_https_client<T>() -> Client<tls::HttpsConnector<HttpConnector>, T>
+pub fn get_https_client<T>() -> Client<tls::HttpsConnector<HttpConnector>, T>
 where
     T: hyper::body::HttpBody + std::marker::Send,
     <T as hyper::body::HttpBody>::Data: Send,

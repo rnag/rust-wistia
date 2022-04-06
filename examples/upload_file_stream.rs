@@ -1,13 +1,15 @@
-use rust_wistia::{FileUploader, Result, UploadClient};
+use rust_wistia::{Result, StreamUploader};
 
 #[macro_use]
 extern crate log;
 
-use std::path::{Path, PathBuf};
+use std::fs;
+use std::io::Cursor;
+use std::path::PathBuf;
 
 use clap::Parser;
 
-/// Upload a local file to Wistia
+/// Upload a local file stream to Wistia
 // noinspection DuplicatedCode
 #[derive(Parser, Debug)]
 struct Args {
@@ -40,14 +42,14 @@ async fn main() -> Result<()> {
 
     let args: Args = Args::parse();
 
-    trace!("Uploading file to Wistia...");
+    trace!("Uploading file stream to Wistia...");
 
-    let client = UploadClient::from_env()?;
-    let file_path = Path::new(&args.file_path);
+    let bytes = fs::read(args.file_path)?;
+    let reader = Cursor::new(bytes);
 
-    // Alternatively, we could use `FileUploader::new(path)?` to
-    // create the new `FileUploader` instance.
-    let res = FileUploader::with_client(file_path, client)
+    // Alternatively, we could use `StreamUploader::new(path)?` to
+    // create the new `StreamUploader` instance.
+    let res = StreamUploader::new(reader)?
         .project_id(&args.project_id)
         .name(&args.name)
         .description(&args.description)

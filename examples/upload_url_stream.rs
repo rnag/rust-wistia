@@ -1,11 +1,12 @@
-use rust_wistia::{Result, UrlUploader};
+use rust_wistia::{stream_uploader_with_url, Result};
 
 #[macro_use]
 extern crate log;
 
 use clap::Parser;
+use rust_wistia::https::get_https_client;
 
-/// Upload a public accessible link to Wistia
+/// Upload the *bytes* data for a public accessible link to Wistia
 ///
 /// You can find links to public test videos here:
 ///   https://gist.github.com/jsturgis/3b19447b304616f18657?permalink_comment_id=3448015#gistcomment-3448015
@@ -39,16 +40,17 @@ async fn main() -> Result<()> {
 
     let args: Args = Args::parse();
 
-    trace!("Uploading link to Wistia...");
+    trace!("Uploading bytes content in link to Wistia...");
 
-    // Alternatively, we could use `UrlUploader::with_client(url, client)` to
-    // create the new `UrlUploader` instance.
-    let mut uploader = UrlUploader::new(&args.url)?;
+    // Alternatively, we could use `stream_uploader_with_url(&args.url, None)` to
+    // create the new `StreamUploader` instance without an explicit HTTPS client.
+    let client = get_https_client();
+    let mut uploader = stream_uploader_with_url(&args.url, client).await?;
 
     // Normally we'll just chain together the methods like below, but here we
     // need to explicitly exclude any empty string values.
     //
-    //   UrlUploader::new(&args.url)?
+    //   StreamUploader::new(bytes)?
     //     .name(&args.name)
     //     .description(&args.description)
 

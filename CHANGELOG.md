@@ -11,6 +11,16 @@ Possible header types:
 
 ## [Unreleased]
 
+## v0.5.0 (2022-04-06)
+
+### Features
+
+* Add new helper function `stream_uploader_with_url` to upload bytes content from a public url or link directly.
+* Add new struct `StreamUploader` to upload file-like *streams* via the Upload API
+* Make all structs derive from `Clone`
+* Expose `https::get_https_client` as public
+* Add new examples
+
 ## v0.4.0 (2022-04-04)
 
 ### Features
