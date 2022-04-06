@@ -57,7 +57,7 @@ pub async fn resp_to_string(resp: &mut Response<Body>) -> Result<String> {
 ///
 /// # Examples
 ///
-/// ```
+/// ```rust,ignore
 /// use rust_wistia::https::get_https_client;
 /// use rust_wistia::utils::stream_reader_from_url;
 ///
@@ -93,7 +93,7 @@ pub async fn stream_reader_from_url(
 ///
 /// # Examples
 ///
-/// ```
+/// ```rust,ignore
 /// use std::sync::Arc;
 /// use rust_wistia::https::get_https_client;
 /// use rust_wistia::utils::stream_reader_from_url_and_arc_client;
