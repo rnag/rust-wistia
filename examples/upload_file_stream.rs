@@ -1,10 +1,10 @@
 use rust_wistia::{Result, StreamUploader};
-use std::fs;
-use std::io::Cursor;
 
 #[macro_use]
 extern crate log;
 
+use std::fs;
+use std::io::Cursor;
 use std::path::PathBuf;
 
 use clap::Parser;
@@ -47,9 +47,11 @@ async fn main() -> Result<()> {
     let bytes = fs::read(args.file_path)?;
     let reader = Cursor::new(bytes);
 
+    let reader = std::io::Cursor::new("Hello world");
+
     // Alternatively, we could use `StreamUploader::new(path)?` to
     // create the new `StreamUploader` instance.
-    let res = StreamUploader::new(reader)?
+    let res = StreamUploader::new("test")?
         .project_id(&args.project_id)
         .name(&args.name)
         .description(&args.description)

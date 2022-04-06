@@ -63,7 +63,7 @@
 mod api;
 pub mod auth;
 pub mod constants;
-mod https;
+pub mod https;
 pub mod models;
 pub mod status;
 pub mod types;

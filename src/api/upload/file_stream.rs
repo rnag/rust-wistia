@@ -1,14 +1,48 @@
 use crate::api::client::UploadClient;
 use crate::constants::DEFAULT_FILENAME;
+use crate::https::{get_https_client, tls};
 use crate::models::*;
 use crate::types::Result;
 
-use std::io::Read;
+use std::io::{Cursor, Read};
 
-use hyper::Request;
+use hyper::client::HttpConnector;
+use hyper::{body::Bytes, Body as HBody, Client, Request};
 use hyper_multipart::client::multipart::Form;
 use hyper_multipart_rfc7578 as hyper_multipart;
 use hyper_multipart_rfc7578::client::multipart::Body;
+
+/// Create a new `StreamUploader` which uses the *bytes* content downloaded
+/// from a publicly accessible **url**.
+///
+/// # Examples
+///
+/// ```
+/// use rust_wistia::{stream_uploader_with_url, https::get_https_client};
+///
+/// let client = get_https_client();
+/// let mut uploader = stream_uploader_with_url("https://google.com/my/image", client).await?;
+/// ```
+pub async fn stream_uploader_with_url(
+    url: &str,
+    client: impl Into<Option<Client<tls::HttpsConnector<HttpConnector>>>>,
+) -> Result<StreamUploader<'_, Cursor<Bytes>>> {
+    let client = client.into().unwrap_or_else(get_https_client);
+
+    // make a GET request to download the url contents
+    let req = Request::get(url).body(HBody::empty())?;
+    let resp = client.request(req).await?;
+
+    // get the bytes content from the url
+    let (_, body) = resp.into_parts();
+    let bytes = hyper::body::to_bytes(body).await?;
+
+    // create the reader
+    let reader = std::io::Cursor::new(bytes);
+
+    // return a stream uploader
+    StreamUploader::new(reader)
+}
 
 /// Client implementation to upload *streams* (file-like objects) and
 /// *videos* via the Wistia **[Upload API]**.
@@ -46,7 +80,7 @@ impl<'a, R: 'static + Read + Send + Sync> StreamUploader<'a, R> {
     /// ```
     ///    
     pub fn new(stream: R) -> Result<Self> {
-        Self::new_with_stream_and_filename(stream, DEFAULT_FILENAME)
+        Self::with_stream_and_filename(stream, DEFAULT_FILENAME)
     }
 
     /// Create a `SteamUploader` with a new HTTPS client, with the access token
@@ -64,12 +98,12 @@ impl<'a, R: 'static + Read + Send + Sync> StreamUploader<'a, R> {
     /// use std::io::Cursor;
     ///
     /// let bytes = Cursor::new("Hello World!");
-    /// let uploader = StreamUploader::new_with_stream_and_filename(bytes, "my_file.mp4")?;
+    /// let uploader = StreamUploader::with_stream_and_filename(bytes, "my_file.mp4")?;
     ///
     /// let res = uploader.send()?.await?;
     /// ```
     ///
-    pub fn new_with_stream_and_filename(stream: R, file_name: &'a str) -> Result<Self> {
+    pub fn with_stream_and_filename(stream: R, file_name: &'a str) -> Result<Self> {
         Ok(Self {
             client: UploadClient::from_env()?,
             req: UploadStreamRequest::new(file_name),
@@ -91,12 +125,12 @@ impl<'a, R: 'static + Read + Send + Sync> StreamUploader<'a, R> {
     /// use std::io::Cursor;
     ///
     /// let bytes = Cursor::new("Hello World!");
-    /// let uploader = StreamUploader::new_with_filename("my_file.mp4")?.stream(bytes);
+    /// let uploader = StreamUploader::with_filename("my_file.mp4")?.stream(bytes);
     ///
     /// let res = uploader.send()?.await?;
     /// ```
     ///
-    pub fn new_with_filename(file_name: &'a str) -> Result<Self> {
+    pub fn with_filename(file_name: &'a str) -> Result<Self> {
         Ok(Self {
             client: UploadClient::from_env()?,
             req: UploadStreamRequest::new(file_name),
@@ -169,7 +203,7 @@ impl<'a, R: 'static + Read + Send + Sync> StreamUploader<'a, R> {
     /// use std::io::Cursor;
     ///
     /// let bytes = Cursor::new("Hello World!");
-    /// let uploader = rust_wistia::StreamUploader::new_with_filename("my_file.mp4")?.stream(bytes);
+    /// let uploader = rust_wistia::StreamUploader::with_filename("my_file.mp4")?.stream(bytes);
     /// ```
     pub fn stream(mut self, stream: R) -> Self {
         self.reader = Some(stream);

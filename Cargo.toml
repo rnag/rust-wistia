@@ -90,6 +90,10 @@ name = "upload_file_stream"
 required-features = ["upload-file"]
 
 [[example]]
+name = "upload_url_stream"
+required-features = ["upload-file"]
+
+[[example]]
 name = "upload_thumbnail"
 required-features = ["upload-file"]
 
