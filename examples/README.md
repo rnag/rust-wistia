@@ -30,7 +30,7 @@ API.
 
 [cargo-rx]: https://github.com/rnag/cargo-rx
 
-Install my project [cargo-rx], which abstracts away `cargo run --example`.
+Install my crate [cargo-rx], which abstracts away `cargo run --example`.
 This provides a single `rx` command.
 
 ```shell
