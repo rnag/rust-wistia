@@ -22,6 +22,8 @@ use hyper_multipart_rfc7578::client::multipart::Body;
 ///
 /// let client = get_https_client();
 /// let mut uploader = stream_uploader_with_url("https://google.com/my/image", client).await?;
+/// // alternatively, without an explicit client:
+/// uploader = stream_uploader_with_url("https://google.com/my/image", None).await?;
 /// ```
 pub async fn stream_uploader_with_url(
     url: &str,
