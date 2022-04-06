@@ -60,8 +60,8 @@ impl<'a> UrlUploader<'a> {
         })
     }
 
-    /// Create an `UrlUploader` with a new HTTPS client, with the access token
-    /// retrieved from the environment.
+    /// Create an `UrlUploader` with a new HTTPS client and a Wistia access
+    /// token.
     ///
     /// # Arguments
     ///

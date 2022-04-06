@@ -17,9 +17,9 @@ use hyper::client::HttpConnector;
 use hyper::Client;
 
 #[cfg(feature = "rust-tls")]
-pub(crate) use hyper_rustls as tls;
+pub use hyper_rustls as tls;
 #[cfg(not(feature = "rust-tls"))]
-pub(crate) use hyper_tls as tls;
+pub use hyper_tls as tls;
 #[cfg(feature = "rust-tls")]
 use rustls::ClientConfig;
 #[cfg(feature = "rust-tls")]

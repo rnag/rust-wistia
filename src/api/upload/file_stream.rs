@@ -1,50 +1,18 @@
 use crate::api::client::UploadClient;
 use crate::constants::DEFAULT_FILENAME;
-use crate::https::{get_https_client, tls};
+use crate::https::tls;
 use crate::models::*;
 use crate::types::Result;
+use crate::utils::{stream_reader_from_url, stream_reader_from_url_and_arc_client};
 
 use std::io::{Cursor, Read};
+use std::sync::Arc;
 
 use hyper::client::HttpConnector;
-use hyper::{body::Bytes, Body as HBody, Client, Request};
+use hyper::{body::Bytes, Client, Request};
 use hyper_multipart::client::multipart::Form;
 use hyper_multipart_rfc7578 as hyper_multipart;
 use hyper_multipart_rfc7578::client::multipart::Body;
-
-/// Create a new `StreamUploader` which uses the *bytes* content downloaded
-/// from a publicly accessible **url**.
-///
-/// # Examples
-///
-/// ```
-/// use rust_wistia::{stream_uploader_with_url, https::get_https_client};
-///
-/// let client = get_https_client();
-/// let mut uploader = stream_uploader_with_url("https://google.com/my/image", client).await?;
-/// // alternatively, without an explicit client:
-/// uploader = stream_uploader_with_url("https://google.com/my/image", None).await?;
-/// ```
-pub async fn stream_uploader_with_url(
-    url: &str,
-    client: impl Into<Option<Client<tls::HttpsConnector<HttpConnector>>>>,
-) -> Result<StreamUploader<'_, Cursor<Bytes>>> {
-    let client = client.into().unwrap_or_else(get_https_client);
-
-    // make a GET request to download the url contents
-    let req = Request::get(url).body(HBody::empty())?;
-    let resp = client.request(req).await?;
-
-    // get the bytes content from the url
-    let (_, body) = resp.into_parts();
-    let bytes = hyper::body::to_bytes(body).await?;
-
-    // create the reader
-    let reader = std::io::Cursor::new(bytes);
-
-    // return a stream uploader
-    StreamUploader::new(reader)
-}
 
 /// Client implementation to upload *streams* (file-like objects) and
 /// *videos* via the Wistia **[Upload API]**.
@@ -59,6 +27,104 @@ pub struct StreamUploader<'a, R: 'static + Read + Send + Sync, B = Body> {
     client: UploadClient<B>,
     req: UploadStreamRequest<'a>,
     reader: Option<R>,
+}
+
+impl<'a> StreamUploader<'a, Cursor<Bytes>> {
+    /// Create a new `StreamUploader` which uses the *bytes* content downloaded
+    /// from a publicly accessible **url**.
+    ///
+    /// # Arguments
+    ///
+    /// * `url` - A public accessible url to the media which will be downloaded.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rust_wistia::{StreamUploader, https::get_https_client};
+    ///
+    /// let mut uploader = StreamUploader::with_url("https://google.com/my/image").await?;
+    /// ```
+    pub async fn with_url(url: &str) -> Result<StreamUploader<'a, Cursor<Bytes>>> {
+        let stream = stream_reader_from_url(url, None).await?;
+        Self::new(stream)
+    }
+
+    /// Create a new `StreamUploader` which uses the *bytes* content downloaded
+    /// from a publicly accessible **url**.
+    ///
+    /// # Arguments
+    ///
+    /// * `url` - A public accessible url to the media which will be downloaded.
+    /// * `access_token` - An API access token used to make requests to the
+    /// Wistia API.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rust_wistia::{StreamUploader, https::get_https_client};
+    ///
+    /// let mut uploader = StreamUploader::with_url_and_token(
+    ///     "https://google.com/my/image",
+    ///     "my-token"
+    /// )
+    /// .await?;
+    /// ```
+    pub async fn with_url_and_token(
+        url: &str,
+        access_token: &str,
+    ) -> Result<StreamUploader<'a, Cursor<Bytes>>> {
+        let stream = stream_reader_from_url(url, None).await?;
+        Ok(Self::with_token(access_token).stream(stream))
+    }
+
+    /// Create a new `StreamUploader` which uses the *bytes* content downloaded
+    /// from a publicly accessible **url**.
+    ///
+    /// # Arguments
+    ///
+    /// * `url` - A public accessible url to the media which will be downloaded.
+    /// * `client` - An optional HTTPS client to use for downloading the media.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rust_wistia::{StreamUploader, https::get_https_client};
+    ///
+    /// let client = get_https_client();
+    /// let mut uploader = StreamUploader::with_url_and_client("https://google.com/my/image", client).await?;
+    /// ```
+    pub async fn with_url_and_client(
+        url: &str,
+        client: impl Into<Option<Client<tls::HttpsConnector<HttpConnector>>>>,
+    ) -> Result<StreamUploader<'a, Cursor<Bytes>>> {
+        let stream = stream_reader_from_url(url, client).await?;
+        Self::new(stream)
+    }
+
+    /// Create a new `StreamUploader` which uses the *bytes* content downloaded
+    /// from a publicly accessible **url**.
+    ///
+    /// # Arguments
+    ///
+    /// * `url` - A public accessible url to the media which will be downloaded.
+    /// * `client` - An optional HTTPS client to use for downloading the media.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use std::sync::Arc;
+    /// use rust_wistia::{StreamUploader, https::get_https_client};
+    ///
+    /// let client = Arc::new(get_https_client());
+    /// let mut uploader = StreamUploader::with_url_and_arc_client("https://google.com/my/image", client).await?;
+    /// ```
+    pub async fn with_url_and_arc_client(
+        url: &str,
+        client: Arc<Client<tls::HttpsConnector<HttpConnector>>>,
+    ) -> Result<StreamUploader<'a, Cursor<Bytes>>> {
+        let stream = stream_reader_from_url_and_arc_client(url, client).await?;
+        Self::new(stream)
+    }
 }
 
 impl<'a, R: 'static + Read + Send + Sync> StreamUploader<'a, R> {
@@ -140,8 +206,8 @@ impl<'a, R: 'static + Read + Send + Sync> StreamUploader<'a, R> {
         })
     }
 
-    /// Create a `SteamUploader` with a new HTTPS client, with the access token
-    /// retrieved from the environment.
+    /// Create a `SteamUploader` with a new HTTPS client and a Wistia access
+    /// token.
     ///
     /// # Arguments
     ///

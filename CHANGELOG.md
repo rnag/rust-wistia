@@ -11,6 +11,18 @@ Possible header types:
 
 ## [Unreleased]
 
+## v0.6.0 (2022-04-06)
+
+### Features
+
+* Refactor `stream_uploader_with_url` into `StreamUploader::with_url`
+* Add new helper methods to `StreamUploader`
+  * `with_url_and_token`
+  * `with_url_and_client`
+  * `with_url_and_arc_client`
+* Expose `https::tls` module as public
+* Add new examples
+
 ## v0.5.0 (2022-04-06)
 
 ### Features
