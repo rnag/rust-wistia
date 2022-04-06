@@ -70,6 +70,7 @@ pub mod types;
 pub mod utils;
 
 pub use api::*;
+pub use https::tls;
 pub use models::error::*;
 pub use types::*;
 

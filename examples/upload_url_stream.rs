@@ -1,4 +1,4 @@
-use rust_wistia::{stream_uploader_with_url, Result};
+use rust_wistia::{Result, StreamUploader};
 
 #[macro_use]
 extern crate log;
@@ -42,10 +42,10 @@ async fn main() -> Result<()> {
 
     trace!("Uploading bytes content in link to Wistia...");
 
-    // Alternatively, we could use `stream_uploader_with_url(&args.url, None)` to
+    // Alternatively, we could use `StreamUploader::with_url(&args.url)` to
     // create the new `StreamUploader` instance without an explicit HTTPS client.
     let client = get_https_client();
-    let mut uploader = stream_uploader_with_url(&args.url, client).await?;
+    let mut uploader = StreamUploader::with_url_and_client(&args.url, client).await?;
 
     // Normally we'll just chain together the methods like below, but here we
     // need to explicitly exclude any empty string values.

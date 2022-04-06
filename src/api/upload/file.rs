@@ -42,8 +42,8 @@ impl<'a, P: AsRef<Path> + Debug> FileUploader<'a, P> {
         })
     }
 
-    /// Create a `FileUploader` with a new HTTPS client, with the access token
-    /// retrieved from the environment.
+    /// Create a `FileUploader` with a new HTTPS client and a Wistia access
+    /// token.
     ///
     /// # Arguments
     ///

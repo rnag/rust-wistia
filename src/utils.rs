@@ -1,11 +1,15 @@
 //! Library-specific utilities, mainly for internal use.
 //!
-use crate::Result;
+use crate::{https::get_https_client, tls, Result};
 
-use std::io::{BufReader, Read};
+use std::io::{BufReader, Cursor, Read};
+use std::sync::Arc;
 
-use hyper::body::Buf;
-use hyper::{Body, Response, Uri};
+use hyper::{
+    body::{Buf, Bytes},
+    client::HttpConnector,
+    Body, Client, Request, Response, Uri,
+};
 use serde::de;
 
 pub fn host_with_path(url: &str) -> Result<String> {
@@ -41,6 +45,76 @@ pub async fn resp_to_string(resp: &mut Response<Body>) -> Result<String> {
     reader.read_to_string(&mut body_string)?;
 
     Ok(body_string)
+}
+
+/// Create a new *stream reader* from the *bytes* content downloaded from a
+/// publicly accessible **url**.
+///
+/// # Arguments
+///
+/// * `url` - A public accessible url to the media which will be downloaded.
+/// * `client` - An optional HTTPS client to use for downloading the media.
+///
+/// # Examples
+///
+/// ```
+/// use rust_wistia::https::get_https_client;
+/// use rust_wistia::utils::stream_reader_from_url;
+///
+/// let client = get_https_client();
+/// let stream = stream_reader_from_url("https://google.com/my/image", client).await?;
+/// ```
+pub async fn stream_reader_from_url(
+    url: &str,
+    client: impl Into<Option<Client<tls::HttpsConnector<HttpConnector>>>>,
+) -> Result<Cursor<Bytes>> {
+    // resolve HTTPS client
+    let client = client.into().unwrap_or_else(get_https_client);
+
+    // make a GET request to download the url contents
+    let req = Request::get(url).body(Body::empty())?;
+    let resp = client.request(req).await?;
+
+    // get the bytes content from the url
+    let (_, body) = resp.into_parts();
+    let bytes = hyper::body::to_bytes(body).await?;
+
+    // create and return the reader
+    Ok(Cursor::new(bytes))
+}
+
+/// Create a new *stream reader* from the *bytes* content downloaded from a
+/// publicly accessible **url**.
+///
+/// # Arguments
+///
+/// * `url` - A public accessible url to the media which will be downloaded.
+/// * `client` - An Arc HTTPS client to use for downloading the media.
+///
+/// # Examples
+///
+/// ```
+/// use std::sync::Arc;
+/// use rust_wistia::https::get_https_client;
+/// use rust_wistia::utils::stream_reader_from_url_and_arc_client;
+///
+/// let client = Arc::new(get_https_client());
+/// let stream = stream_reader_from_url_and_arc_client("https://google.com/my/image", client).await?;
+/// ```
+pub async fn stream_reader_from_url_and_arc_client(
+    url: &str,
+    client: Arc<Client<tls::HttpsConnector<HttpConnector>>>,
+) -> Result<Cursor<Bytes>> {
+    // make a GET request to download the url contents
+    let req = Request::get(url).body(Body::empty())?;
+    let resp = client.request(req).await?;
+
+    // get the bytes content from the url
+    let (_, body) = resp.into_parts();
+    let bytes = hyper::body::to_bytes(body).await?;
+
+    // create and return the reader
+    Ok(Cursor::new(bytes))
 }
 
 #[cfg(test)]
