@@ -63,7 +63,7 @@ async fn main() -> Result<()> {
     let _content = client.download_asset(info).await?;
 
     pb.finish(format_args!(
-        "Downloaded the asset, and saved it to a file: {:?}",
+        "downloaded the asset, and saved it to a file: {:?}",
         args.file_path,
     ));
 
