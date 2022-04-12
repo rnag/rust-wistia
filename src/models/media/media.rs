@@ -32,13 +32,15 @@ pub struct Media {
 }
 
 impl Media {
+    /// Retrieve the *asset URL* for the original source media that was uploaded.
     pub fn source_url(&self) -> Result<String> {
         self.asset_url(None)
     }
 
-    /// Link with SSL
+    /// Retrieve the *asset URL* (default: **HTTPS**) for a specified `asset_type`, which
+    /// defaults to the original source media if not provided.
     pub fn asset_url<'a>(&'a self, asset_type: impl Into<Option<&'a str>>) -> Result<String> {
-        let url = self.asset_url_http(asset_type)?;
+        let url = self.asset_url_insecure(asset_type)?;
 
         let (_, id) = url.rsplit_once('/').unwrap();
         let id = match id.rsplit_once(".bin") {
@@ -51,7 +53,12 @@ impl Media {
         ))
     }
 
-    pub fn asset_url_http<'a>(&'a self, asset_type: impl Into<Option<&'a str>>) -> Result<&'a str> {
+    /// Retrieve the *asset URL* (default: **HTTP**) for a specified `asset_type`, which
+    /// defaults to the original source media if not provided.
+    pub fn asset_url_insecure<'a>(
+        &'a self,
+        asset_type: impl Into<Option<&'a str>>,
+    ) -> Result<&'a str> {
         let r#type = asset_type.into().unwrap_or(ORIGINAL_ASSET);
 
         for asset in self.assets.iter() {

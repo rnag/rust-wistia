@@ -19,7 +19,7 @@ Possible header types:
 * Add new methods to `Media`:
   * `source_url` 
   * `asset_url`
-  * `asset_url_http`
+  * `asset_url_insecure`
 * Add examples to demonstrate how to download an asset for a media.
 
 ## v0.6.0 (2022-04-06)

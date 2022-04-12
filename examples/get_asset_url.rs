@@ -39,7 +39,7 @@ async fn main() -> Result<()> {
     let media = client.get_media(video_id).await?;
 
     let url = if args.no_ssl {
-        media.asset_url_http(asset_type)?.to_owned()
+        media.asset_url_insecure(asset_type)?.to_owned()
     } else {
         // as a shorthand, we could just call `media.source_url()?` in this case
         media.asset_url(asset_type)?
