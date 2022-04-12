@@ -1,4 +1,7 @@
 use super::{Asset, MediaStatus, MediaType, ProjectInfo, Thumbnail};
+use crate::constants::*;
+use crate::{Result, RustWistiaError};
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Default, Debug, PartialEq, Serialize, Deserialize)]
@@ -26,4 +29,41 @@ pub struct Media {
     pub embed_code: String,
     pub assets: Vec<Asset>,
     pub section: Option<String>,
+}
+
+impl Media {
+    pub fn source_url(&self) -> Result<String> {
+        self.asset_url(None)
+    }
+
+    /// Link with SSL
+    pub fn asset_url<'a>(&'a self, asset_type: impl Into<Option<&'a str>>) -> Result<String> {
+        let url = self.asset_url_http(asset_type)?;
+
+        let (_, id) = url.rsplit_once('/').unwrap();
+        let id = match id.rsplit_once(".bin") {
+            Some((id, _)) => id,
+            None => id,
+        };
+
+        Ok(format!(
+            "https://embed-ssl.wistia.com/deliveries/{id}/{DEFAULT_FILENAME}"
+        ))
+    }
+
+    pub fn asset_url_http<'a>(&'a self, asset_type: impl Into<Option<&'a str>>) -> Result<&'a str> {
+        let r#type = asset_type.into().unwrap_or(ORIGINAL_ASSET);
+
+        for asset in self.assets.iter() {
+            if asset.type_field == r#type {
+                return Ok(&asset.url);
+            }
+        }
+
+        Err(RustWistiaError::AssetNotFound {
+            r#type: r#type.to_string(),
+            video_id: self.hashed_id.clone(),
+            valid_types: self.assets.iter().map(|a| a.type_field.clone()).collect(),
+        })
+    }
 }

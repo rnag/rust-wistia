@@ -2,12 +2,13 @@ use crate::auth::auth_token;
 use crate::constants::ENV_VAR_NAME;
 use crate::https::{get_https_client, tls};
 use crate::log::*;
-use crate::models::{Media, MediaInfo, UpdateMediaRequest};
+use crate::models::*;
 use crate::status::raise_for_status;
-use crate::utils::into_struct_from_slice;
+use crate::utils::{into_struct_from_slice, stream_reader_from_url};
 use crate::RustWistiaError;
 
 use std::borrow::Cow;
+use std::io::Cursor;
 use std::time::Instant;
 
 use hyper::client::{Client, HttpConnector};
@@ -62,6 +63,31 @@ impl<'a> DataClient<'a> {
     /// Create a new Wistia `DataClient` from an access token
     pub fn new(access_token: &'a str) -> Self {
         Self::from(access_token)
+    }
+
+    pub async fn download_asset(
+        &'a self,
+        req: DownloadAssetRequest<'a>,
+    ) -> crate::Result<Cursor<hyper::body::Bytes>> {
+        let media = if let Some(media) = req.media {
+            media
+        } else if let Some(media_id) = req.media_id {
+            self.get_media(media_id).await?
+        } else {
+            return Err(RustWistiaError::MediaIsRequired);
+        };
+
+        let url = media.asset_url(req.asset_type)?;
+
+        if let Some(file_path) = req.file_path {
+            let mut content = stream_reader_from_url(&url, self.client.clone()).await?;
+            let mut file = std::fs::File::create(file_path)?;
+            std::io::copy(&mut content, &mut file)?;
+
+            Ok(content)
+        } else {
+            stream_reader_from_url(&url, self.client.clone()).await
+        }
     }
 
     /// Initialize a new Wistia `DataClient` object from an API access token,

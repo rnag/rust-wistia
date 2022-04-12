@@ -1,4 +1,5 @@
 mod asset;
+mod download_asset;
 mod media;
 mod media_info;
 mod project;
@@ -8,6 +9,7 @@ mod r#type;
 mod update_request;
 
 pub use asset::*;
+pub use download_asset::*;
 pub use media::*;
 pub use media_info::*;
 pub use project::*;

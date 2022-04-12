@@ -15,3 +15,7 @@ pub const ENV_VAR_NAME: &str = "WISTIA_API_TOKEN";
 /// Default file name when uploading a file stream (via the `StreamUploader`)
 /// via the Upload API.
 pub const DEFAULT_FILENAME: &str = "file.mp4";
+
+/// Default asset type based on the `Medias#show` response. The current
+/// default points to the original media source that was uploaded.
+pub const ORIGINAL_ASSET: &str = "OriginalFile";

@@ -20,6 +20,16 @@ pub enum RustWistiaError {
     FileNotFound(String),
     #[error("environment variable `{name}` must be set")]
     EnvVarNotFound { name: String },
+    /// An invalid media asset type is specified
+    #[error("{video_id}: no such asset ({r#type}) for video.\n  Valid Assets: {valid_types:?}")]
+    AssetNotFound {
+        r#type: String,
+        video_id: String,
+        valid_types: Vec<String>,
+    },
+    /// A `media_id` or `media` argument is not specified
+    #[error("An argument for `media_id` or `media` is required.")]
+    MediaIsRequired,
     /// `RequestError` is raised when the Wistia API responds back with a
     /// *non-* "OK" response.
     ///
