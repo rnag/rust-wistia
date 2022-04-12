@@ -5,14 +5,16 @@ extern crate log;
 
 use clap::Parser;
 
-/// Retrieve info on a Wistia video
+/// Retrieve the media [Asset URL] on a Wistia video
+///
+/// [Asset URL]: https://wistia.com/support/developers/asset-urls
 #[derive(Parser, Debug)]
 struct Args {
     /// Hashed ID of the Wistia video to retrieve info on
     #[clap(short, long)]
     video_id: String,
 
-    /// Type of the media asset to retrieve
+    /// Type of the media asset to retrieve. Defaults to the original asset that was uploaded.
     #[clap(short = 't', long, default_value = "OriginalFile")]
     asset_type: String,
 

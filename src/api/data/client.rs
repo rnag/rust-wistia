@@ -65,31 +65,6 @@ impl<'a> DataClient<'a> {
         Self::from(access_token)
     }
 
-    pub async fn download_asset(
-        &'a self,
-        req: DownloadAssetRequest<'a>,
-    ) -> crate::Result<Cursor<hyper::body::Bytes>> {
-        let media = if let Some(media) = req.media {
-            media
-        } else if let Some(media_id) = req.media_id {
-            self.get_media(media_id).await?
-        } else {
-            return Err(RustWistiaError::MediaIsRequired);
-        };
-
-        let url = media.asset_url(req.asset_type)?;
-
-        if let Some(file_path) = req.file_path {
-            let mut content = stream_reader_from_url(&url, self.client.clone()).await?;
-            let mut file = std::fs::File::create(file_path)?;
-            std::io::copy(&mut content, &mut file)?;
-
-            Ok(content)
-        } else {
-            stream_reader_from_url(&url, self.client.clone()).await
-        }
-    }
-
     /// Initialize a new Wistia `DataClient` object from an API access token,
     /// assuming this is currently set in the environment.
     pub fn from_env() -> crate::Result<Self> {
@@ -99,6 +74,49 @@ impl<'a> DataClient<'a> {
             })?;
 
         Ok(Self::from(token))
+    }
+
+    /// Download an [Asset URL] for a media from Wistia.
+    ///
+    /// If `file_path` is specified, the downloaded media content is copied
+    /// over to a new file.
+    ///
+    /// [Asset URL]: https://wistia.com/support/developers/asset-urls
+    ///
+    /// # Returns
+    ///
+    /// The bytes content of the source asset for a specified media.
+    ///
+    pub async fn download_asset(
+        &'a self,
+        req: DownloadAssetRequest<'a>,
+    ) -> crate::Result<Cursor<hyper::body::Bytes>> {
+        // Use `media` from request, or make a call to the `Medias#Show` API
+        // to retrieve asset info for the video.
+        let media = if let Some(media) = req.media {
+            media
+        } else if let Some(media_id) = req.media_id {
+            self.get_media(media_id).await?
+        } else {
+            return Err(RustWistiaError::MediaIsRequired);
+        };
+
+        // Get the media asset source url (defaults to one for the original file)
+        let url = media.asset_url(req.asset_type)?;
+
+        // Download the media from the asset url
+        let media_content = stream_reader_from_url(&url, self.client.clone()).await;
+
+        if let Some(file_path) = req.file_path {
+            // Copy over media content to a file
+            let mut content = media_content?;
+            let mut file = std::fs::File::create(file_path)?;
+            std::io::copy(&mut content, &mut file)?;
+
+            Ok(content)
+        } else {
+            media_content
+        }
     }
 
     /// Retrieve info on a media on Wistia (typically a video)
