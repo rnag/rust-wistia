@@ -1,6 +1,6 @@
 [package]
 name = "rust-wistia"
-version = "0.6.0"
+version = "0.7.0"
 authors = ["Ritvik Nag <rv.kvetch@gmail.com>"]
 description = "A rust crate wrapping Wistia's Data and Upload API into a simple easy to use interface"
 documentation = "https://docs.rs/rust-wistia/"
@@ -41,6 +41,8 @@ clap = { version = "^3.1", features = ["derive"] }
 log = "^0.4"
 sensible-env-logger = { version = "^0.2", features = ["local-time"] }
 tokio = { version = "1.16.1", features = ["macros", "rt-multi-thread"] }
+atty = "0.2.14"
+indicatif = "0.16.2"
 # Ensure package versions mentioned in the docs are up to date.
 version-sync = "0.9.4"
 

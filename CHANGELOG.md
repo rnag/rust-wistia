@@ -11,6 +11,17 @@ Possible header types:
 
 ## [Unreleased]
 
+## v0.7.0 (2022-04-12)
+
+### Features
+
+* Add new method `DataClient::download_asset()` to download a source asset on a Wistia video.
+* Add new methods to `Media`:
+  * `source_url` 
+  * `asset_url`
+  * `asset_url_insecure`
+* Add examples to demonstrate how to download an asset for a media.
+
 ## v0.6.0 (2022-04-06)
 
 ### Features
