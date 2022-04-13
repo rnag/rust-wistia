@@ -12,6 +12,10 @@ use hyper::{
 };
 use serde::de;
 
+pub fn is_default<T: Default + PartialEq>(t: &T) -> bool {
+    t == &T::default()
+}
+
 pub fn host_with_path(url: &str) -> Result<String> {
     let uri: Uri = url.parse()?;
     let host = uri.host().unwrap();
