@@ -11,6 +11,15 @@ Possible header types:
 
 ## [Unreleased]
 
+## v0.7.1 (2022-04-13)
+
+### Bug Fixes
+
+* Make following fields optional in `Asset`, as they are generally not populated
+  in the response for *audio* files:
+  * `height`
+  * `width`
+
 ## v0.7.0 (2022-04-12)
 
 ### Features
