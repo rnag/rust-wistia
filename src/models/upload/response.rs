@@ -55,6 +55,7 @@ mod tests {
           "name": "dramatic_squirrel.mp4",
           "description": "",
           "type": "Video",
+          "archived": false,
           "created": "2012-10-26T16:47:09+00:00",
           "updated": "2012-10-26T16:47:10+00:00",
           "duration": 5.333000183105469,
