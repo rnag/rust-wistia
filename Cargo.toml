@@ -21,19 +21,19 @@ targets = ["x86_64-unknown-linux-gnu"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-hyper = { version = "0.14.16", default-features = false, features = ["client"] }
-serde = { version = "1.0.136", features = ["derive"] }
-serde_json = { version = "1.0.78", default-features = false }
-thiserror = { version = "1.0.30" }  # To easily generate library errors
+hyper = { version = "^ 0.14", default-features = false, features = ["client"] }
+serde = { version = "^ 1.0", features = ["derive"] }
+serde_json = { version = "^ 1.0", default-features = false }
+thiserror = { version = "^ 1.0" }  # To easily generate library errors
 
 # Optional
 
-log = { version = "0.4.14", optional = true }
-serde_urlencoded = { version = "0.7.1", optional = true }
-hyper-multipart-rfc7578 = { version = "0.5.1", optional = true }
-hyper-rustls = { version = "0.23.0", optional = true, default-features = false, features = ["native-tokio", "tls12"] }
-rustls = { version = "0.20.1", optional = true, default-features = false }
-hyper-tls = { version = "0.5.0", optional = true }
+log = { version = "^ 0.4", optional = true }
+serde_urlencoded = { version = "^ 0.7", optional = true }
+hyper-multipart-rfc7578 = { version = "^ 0.5", optional = true }
+hyper-rustls = { version = "^ 0.24.0", optional = true, default-features = false, features = ["native-tokio", "tls12"] }
+rustls = { version = "^ 0.21.0", optional = true, default-features = false }
+hyper-tls = { version = "^ 0.5.0", optional = true }
 
 [dev-dependencies]
 
