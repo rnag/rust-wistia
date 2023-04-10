@@ -51,7 +51,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! rust-wistia = { version = "0.7.1", default-features = false, features = ["native-tls", "logging", "serde-std"] }
+//! rust-wistia = { version = "0.8", default-features = false, features = ["native-tls", "logging", "serde-std"] }
 //! ```
 //!
 //! [hyper]: https://docs.rs/hyper

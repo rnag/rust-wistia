@@ -26,9 +26,12 @@ pub struct Media {
     pub thumbnail: Thumbnail,
     pub project: ProjectInfo,
     #[serde(skip_serializing)]
+    #[serde(default)]
     pub embed_code: String,
     pub assets: Vec<Asset>,
     pub section: Option<String>,
+    #[serde(default)]
+    pub archived: bool,
 }
 
 impl Media {

@@ -20,4 +20,6 @@ pub struct MediaInfo {
     pub progress: f64,
     pub thumbnail: Thumbnail,
     pub section: Option<String>,
+    #[serde(default)]
+    pub archived: bool,
 }

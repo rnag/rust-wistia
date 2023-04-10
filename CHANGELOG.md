@@ -11,6 +11,18 @@ Possible header types:
 
 ## [Unreleased]
 
+## v0.8.0 (2023-04-10)
+
+### Features
+
+* Add `archived` (type `bool`) fields to `Media` and `UploadResponse` (see [wystia#59](https://github.com/rnag/wystia/issues/59))
+* Update project *dependency* versions in `Cargo.toml` 
+  * Relax project *dependency* versions with `^`
+
+### Bug Fixes
+
+* Make `embed_code` field optional in `Media`, as sometimes it is not populated
+
 ## v0.7.1 (2022-04-13)
 
 ### Bug Fixes

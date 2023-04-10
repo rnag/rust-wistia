@@ -21,6 +21,7 @@ pub struct UploadResponse {
     pub status: MediaStatus,
     pub thumbnail: Thumbnail,
     pub account_id: u64,
+    pub archived: bool,
 }
 
 fn empty_string_is_none<'de, D>(deserializer: D) -> Result<Option<String>, D::Error>
