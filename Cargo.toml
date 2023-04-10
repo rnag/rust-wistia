@@ -1,6 +1,6 @@
 [package]
 name = "rust-wistia"
-version = "0.8.0"
+version = "0.7.2"
 authors = ["Ritvik Nag <rv.kvetch@gmail.com>"]
 description = "A rust crate wrapping Wistia's Data and Upload API into a simple easy to use interface"
 documentation = "https://docs.rs/rust-wistia/"
